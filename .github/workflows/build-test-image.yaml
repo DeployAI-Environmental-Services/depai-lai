@@ -1,0 +1,87 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: leaf-area-index
+  CONTAINER_NAME: test-leaf-area-index
+  IMAGE_VERSION: v0.1
+  REGISTRY: ghcr.io
+  REPOSITORY: ${{ github.repository }}
+
+jobs:
+  build-test-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+        ports:
+          - 8061:8061
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Build Docker image
+        run: docker build . -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+
+      - name: Run Docker container
+        run: docker run -d -v ./test-data:/data -p 8061:8061 --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+
+      - name: Wait for container to be ready
+        run: |
+          sleep 10
+          docker ps
+      - name: Install test requirements
+        run: pip install pytest grpcio-tools
+
+      - name: Run tests
+        run: pytest -s test_image_processor.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+
+      - name: Stop and remove Docker container
+        if: always()
+        run: |
+          docker stop ${{ env.CONTAINER_NAME }}
+          docker rm ${{ env.CONTAINER_NAME }}
+      - name: Login to GitHub Container Registry
+        if: success()
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag Docker image
+        if: success()
+        run: docker tag ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }} ${{ env.REGISTRY }}/$(echo ${{ env.REPOSITORY }} | awk -F '/' '{print tolower($1)"/"$2}'):${{ env.IMAGE_VERSION }}
+
+      - name: Push Docker image
+        if: success()
+        run: docker push ${{ env.REGISTRY }}/$(echo ${{ env.REPOSITORY }} | awk -F '/' '{print tolower($1)"/"$2}'):${{ env.IMAGE_VERSION }}
+
+      - name: Remove Docker image
+        if: always()
+        run: docker rmi ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}

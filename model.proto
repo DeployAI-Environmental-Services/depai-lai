@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+message ImageData {
+    string image_path = 1;
+    int32 offset = 2;
+}
+
+message ImageRequest {
+    repeated ImageData images = 1;
+}
+
+message ImageResponse {
+    message ProcessedImage {
+        string image_path = 1;
+        bool processed = 2;
+        string result_path = 3;
+    }
+    repeated ProcessedImage results = 1;
+}
+
+service ImageProcessor {
+    rpc ProcessImage (ImageRequest) returns (ImageResponse);
+}

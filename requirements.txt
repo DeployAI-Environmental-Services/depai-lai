@@ -1,0 +1,11 @@
+grpcio
+grpcio-tools
+tifffile==2022.10.10
+numpy==1.26.4
+requests==2.31.0
+keras==3.2.1
+tensorflow==2.16.1
+imagecodecs
+geopandas==0.14.4
+shapely
+gdown
