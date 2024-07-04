@@ -75,5 +75,5 @@ docker pull ghcr.io/albughdadim/depai-lai:v0.1
 - Create a container
 
 ```powershell
-docker run --name=test -p 8061:8061 ghcr.io/albughdadim/depai-lai:v0.1
+docker run --name=test -p 8061:8061 -v ./test-data:/data ghcr.io/albughdadim/depai-lai:v0.1
 ```
