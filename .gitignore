@@ -70,4 +70,4 @@ src/sam/weights
 test-data/*/
 
 app/weights/*.keras
-test_folder/.
+test_folder/
