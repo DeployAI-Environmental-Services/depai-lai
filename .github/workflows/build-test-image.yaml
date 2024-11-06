@@ -47,7 +47,7 @@ jobs:
         run: docker build . -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
 
       - name: Run Docker container
-        run: docker run -d -v ./test-data:/data -p 8061:8061 --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+        run: docker run -d -v ./test-data:/data -p 8061:8061 -p 8062:8062  --env SHARED_FOLDER_PATH=/data --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
 
       - name: Wait for container to be ready
         run: |
