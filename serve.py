@@ -1,9 +1,10 @@
-import time
-import grpc
+import threading
 from concurrent import futures
+import grpc
 import model_pb2
 import model_pb2_grpc
 from app.inference import lai_estimate
+from upload import app_run
 
 
 class ImageProcessorServicer(model_pb2_grpc.ImageProcessorServicer):
@@ -17,14 +18,14 @@ class ImageProcessorServicer(model_pb2_grpc.ImageProcessorServicer):
 
         results = []
         for res in result:
-            processed_image = model_pb2.ImageResponse.ProcessedImage(
+            processed_image = model_pb2.ImageResponse.ProcessedImage(  # type: ignore pylint:disable=E1101
                 image_path=res["image_path"],
                 processed=res["processed"],
                 result_path=res["result_path"],
             )
             results.append(processed_image)
 
-        return model_pb2.ImageResponse(results=results)
+        return model_pb2.ImageResponse(results=results)  # type: ignore pylint:disable=E1101
 
     def run_model(self, list_images):
         results = lai_estimate(list_images)
@@ -38,11 +39,8 @@ def serve():
     )
     server.add_insecure_port("[::]:8061")
     server.start()
-    try:
-        while True:
-            time.sleep(86400)
-    except KeyboardInterrupt:
-        server.stop(0)
+    threading.Thread(target=app_run).start()
+    server.wait_for_termination()
 
 
 if __name__ == "__main__":

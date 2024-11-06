@@ -1,6 +1,5 @@
 import grpc
 import pytest
-from concurrent import futures
 import model_pb2
 import model_pb2_grpc
 
@@ -14,9 +13,11 @@ def grpc_stub():
 
 
 def test_process_image(grpc_stub):
-    request = model_pb2.ImageRequest(
+    request = model_pb2.ImageRequest(  # pylint:disable=E1101 # type: ignore
         images=[
-            model_pb2.ImageData(image_path="/data/test_img_10b.tif", offset=-1000),
+            model_pb2.ImageData(  # pylint:disable=E1101 # type: ignore
+                image_path="/data/test_img_10b.tif", offset=-1000
+            ),
         ]
     )
 

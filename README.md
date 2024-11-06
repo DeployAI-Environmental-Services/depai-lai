@@ -1,6 +1,6 @@
 # Leaf Area Index Estimation for Sentinel-2 Images
 
-This repository provides a deep learning model for Leaf Area Index (LAI estimation) from Sentinel-2 satellite images.
+This repository provides a deep learning model for Leaf Area Index (LAI estimation) from Sentinel-2 satellite images exposed using a webapp.
 
 ## Input format
 
@@ -47,7 +47,7 @@ docker build . -t lai:v0.1
 - Create a container from the built image
 
 ```powershell
-docker run --name=test -v ./test-data:/data -p 8061:8061 lai:v0.1
+docker run --name=test  -v ./test_folder:/data  --env SHARED_FOLDER_PATH=/data -p 8061:8061 -p 8062:8062 lai:v0.1
 ```
 
 - Run the pytest
@@ -75,5 +75,5 @@ docker pull ghcr.io/albughdadim/depai-lai:v0.1
 - Create a container
 
 ```powershell
-docker run --name=test -p 8061:8061 -v ./test-data:/data ghcr.io/albughdadim/depai-lai:v0.1
+docker run --name=test  -v ./test_folder:/data  --env SHARED_FOLDER_PATH=/data -p 8061:8061 -p 8062:8062 ghcr.io/albughdadim/depai-lai:v0.1
 ```

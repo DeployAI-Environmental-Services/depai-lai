@@ -99,9 +99,9 @@ class NeuralNetwork:
         for j_h, h in enumerate(h_start):
             for j_w, w in enumerate(w_start):
                 i = len(w_start) * j_h + j_w
-                predicted_mask[
-                    :, h : h + final_size[0], w : w + final_size[0]
-                ] = prediction[i]
+                predicted_mask[:, h : h + final_size[0], w : w + final_size[0]] = (
+                    prediction[i]
+                )
 
         return predicted_mask[:, :height, :width]
 
@@ -175,7 +175,7 @@ class NeuralNetwork:
         file_list = glob.glob(os.path.join(predictions_temp_directory, "*.tif"))
         files_string = " ".join(file_list)
         gdal_merge_cmd = (
-            "python3 /lai/app/gdal_merge.py -o "
+            "python3 ./app/gdal_merge.py -o "
             + output_path
             + " -of gtiff "
             + files_string
