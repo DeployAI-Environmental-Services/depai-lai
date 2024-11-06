@@ -37,7 +37,7 @@ cd depai-lai
 - If the files `model_pb2_grpc.py` and `model_pb2.py` are not there, generate them using
 
 ```powershell
-python3.10 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. model.proto
+python3.12 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. model.proto
 ```
 
 - Build the docker image
