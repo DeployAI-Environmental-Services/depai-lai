@@ -61,4 +61,5 @@ docs/_build/
 *.pth
 app/weights/*.keras
 data
+test_folder/
 
