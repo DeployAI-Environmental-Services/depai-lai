@@ -2,6 +2,8 @@
 
 This repository provides a deep learning model for Leaf Area Index (LAI estimation) from Sentinel-2 satellite images exposed using a webapp.
 
+![Webapp](imgs/webapp-sample.png)
+
 ## Input format
 
 The model assumes that the input images are Geotiff images. The minimum allowed size of these images is $500\times500$. 10 Spectral bands are used for the estimation of LAI, which must be in the following order `['B02','B03','B04','B05','B06','B07','B08','B8A','B11','B12']`.
